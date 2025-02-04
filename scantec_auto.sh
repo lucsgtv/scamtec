@@ -68,7 +68,10 @@ for data in "${datas[@]}"; do
 
         sed -i "s,#REG#,$reg,g" scantec.conf
         sed -i "s,Starting Time:.*,Starting Time: $data,g" scantec.conf
-        sed -i "s,Ending Time:.*,Ending Time: $(date -d "$data +1 month" +"%Y%m%d00"),g" scantec.conf
+
+        # Ajuste para o cálculo da data final com o incremento de um mês
+        data_final=$(date -d "$data01" "+%Y%m%d%H")
+        sed -i "s,Ending Time:.*,Ending Time: $data_final,g" scantec.conf
 
         mkdir -p "${opath}/${reg}"
         nohup "${scantecbin}" > "${lpath}/${reg}/${reg}.log" &

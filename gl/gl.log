@@ -1,3 +1,5 @@
+STOP 99035
+scan_dataMOD :: loadData( ): File not found!/dados/ensemble/lucas.alvarenga/xc50/lustre/TQ0299L064/2024112600/GPOSCPT20241126002024112600P.icn.TQ0299L064.ctl error, stat =-1
  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
  !                         Climatology Not Found                       !
  !         The mean reference field will be used as climatology        !
@@ -7,3 +9,16 @@
  !     Please wait while the system is performing the statistics       !
  !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
    Analisys   Forecast        fct
+ 2024111500 2024111500        00h
+ 2024111500 2024111600        24h
+ 2024111500 2024111700        48h
+ 2024111500 2024111800        72h
+ 2024111500 2024111900        96h
+ 2024111500 2024112000       120h
+ 2024111500 2024112100       144h
+ 2024111500 2024112200       168h
+ 2024111500 2024112300       192h
+ 2024111500 2024112400       216h
+ 2024111500 2024112500       240h
+ 2024111500 2024112600       264h
+[31;1mscan_dataMOD :: loadData( )[m
