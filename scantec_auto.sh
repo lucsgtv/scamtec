@@ -21,7 +21,7 @@ for i in {1..4}; do
 
     data_final=$(printf "%04d%02d%s%s" "$ano" "$mes" "$dia" "$hora")
     datas+=("$data_final")
-    data_inicial=$data_final  # Correção aqui
+    data_inicial=$data_final  
 done
 
 Regs=("gl" "hn" "tr" "hs" "as")
@@ -30,36 +30,42 @@ for data in "${datas[@]}"; do
     for reg in "${Regs[@]}"; do
         scantecbin="${lpath}/${reg}/scantec.x"
         mkdir -p "${lpath}/${reg}"
-        cp -v "${scantecbin}" "${lpath}/${reg}"
+        
+        if [ ! -f "${lpath}/${reg}/scantec.x" ]; then
+            cp -v "${scantecbin}" "${lpath}/${reg}"
+        fi
+        
         cd "${lpath}/${reg}" || exit 1
+
+        cp "$template_path" scantec.conf
 
         case "$reg" in
             "as")
-                sed "s,#LOWLEFTLAT#,-49.875,g" "$template_path" > scantec.conf
+                sed -i "s,#LOWLEFTLAT#,-49.875,g" scantec.conf
                 sed -i "s,#LOWLEFTLON#,-82.625,g" scantec.conf
                 sed -i "s,#UPRIGHTLAT#,11.375,g" scantec.conf
                 sed -i "s,#UPRIGHTLON#,-35.375,g" scantec.conf
                 ;;
             "gl")
-                sed "s,#LOWLEFTLAT#,-80,g" "$template_path" > scantec.conf
+                sed -i "s,#LOWLEFTLAT#,-80,g" scantec.conf
                 sed -i "s,#LOWLEFTLON#,0,g" scantec.conf
                 sed -i "s,#UPRIGHTLAT#,80,g" scantec.conf
                 sed -i "s,#UPRIGHTLON#,360,g" scantec.conf
                 ;;
             "hn")
-                sed "s,#LOWLEFTLAT#,20,g" "$template_path" > scantec.conf
+                sed -i "s,#LOWLEFTLAT#,20,g" scantec.conf
                 sed -i "s,#LOWLEFTLON#,0,g" scantec.conf
                 sed -i "s,#UPRIGHTLAT#,80,g" scantec.conf
                 sed -i "s,#UPRIGHTLON#,360,g" scantec.conf
                 ;;
             "tr")
-                sed "s,#LOWLEFTLAT#,-20,g" "$template_path" > scantec.conf
+                sed -i "s,#LOWLEFTLAT#,-20,g" scantec.conf
                 sed -i "s,#LOWLEFTLON#,0,g" scantec.conf
                 sed -i "s,#UPRIGHTLAT#,20,g" scantec.conf
                 sed -i "s,#UPRIGHTLON#,360,g" scantec.conf
                 ;;
             "hs")
-                sed "s,#LOWLEFTLAT#,-80,g" "$template_path" > scantec.conf
+                sed -i "s,#LOWLEFTLAT#,-80,g" scantec.conf
                 sed -i "s,#LOWLEFTLON#,0,g" scantec.conf
                 sed -i "s,#UPRIGHTLAT#,-20,g" scantec.conf
                 sed -i "s,#UPRIGHTLON#,360,g" scantec.conf
@@ -69,10 +75,8 @@ for data in "${datas[@]}"; do
         sed -i "s,#REG#,$reg,g" scantec.conf
         sed -i "s,Starting Time:.*,Starting Time: $data,g" scantec.conf
 
-        # Ajuste para o cálculo da data final com o incremento de um mês
         data_final=$(date -d "$data01" "+%Y%m%d%H")
         sed -i "s,Ending Time:.*,Ending Time: $data_final,g" scantec.conf
-
         mkdir -p "${opath}/${reg}"
         nohup "${scantecbin}" > "${lpath}/${reg}/${reg}.log" &
     done
