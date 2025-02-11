@@ -4,40 +4,23 @@ lpath="/scripts/das/${USER}/SCANTEC-2.1.0/bin"
 opath="/scripts/das/${USER}/SCANTEC-2.1.0/dataout/SMNA-Oper"
 template_path="${lpath}/scantec.conf-template"
 
-data_inicial="2024081500"
-datas=()
-
-for i in {1..4}; do
-    ano=$(echo $data_inicial | cut -c1-4)
-    mes=$(echo $data_inicial | cut -c5-6)
-    dia="15"
-    hora="00"
-
-    mes=$((10#$mes + 1))
-    if [ $mes -gt 12 ]; then
-        mes=1
-        ano=$((ano + 1))
-    fi
-
-    data_final=$(printf "%04d%02d%s%s" "$ano" "$mes" "$dia" "$hora")
-    datas+=("$data_final")
-    data_inicial=$data_final  
-done
+datas=("2024081500" "2024091500" "2024101500" "2024111500")
 
 Regs=("gl" "hn" "tr" "hs" "as")
 
 for data in "${datas[@]}"; do
+    
+    data_fim=$(date -d "${data:0:8} +1 month" +"%Y%m%d")00
+
     for reg in "${Regs[@]}"; do
         scantecbin="${lpath}/${reg}/scantec.x"
         mkdir -p "${lpath}/${reg}"
-        
-        if [ ! -f "${lpath}/${reg}/scantec.x" ]; then
-            cp -v "${scantecbin}" "${lpath}/${reg}"
-        fi
-        
+        cp -v "${scantecbin}" "${lpath}/${reg}"
         cd "${lpath}/${reg}" || exit 1
 
-        cp "$template_path" scantec.conf
+        
+        sed "s,#STARTTIME#,$data,g" "$template_path" > scantec.conf
+        sed -i "s,#ENDTIME#,$data_fim,g" scantec.conf
 
         case "$reg" in
             "as")
@@ -73,14 +56,13 @@ for data in "${datas[@]}"; do
         esac
 
         sed -i "s,#REG#,$reg,g" scantec.conf
-        sed -i "s,Starting Time:.*,Starting Time: $data,g" scantec.conf
 
-        data_final=$(date -d "$data01" "+%Y%m%d%H")
-        sed -i "s,Ending Time:.*,Ending Time: $data_final,g" scantec.conf
         mkdir -p "${opath}/${reg}"
         nohup "${scantecbin}" > "${lpath}/${reg}/${reg}.log" &
     done
 done
+
+wait
 
 exit 0
 
